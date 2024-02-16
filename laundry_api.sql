@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 16, 2024 at 10:13 PM
+-- Generation Time: Feb 16, 2024 at 10:31 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -68,8 +68,10 @@ CREATE TABLE `orders` (
   `customerPhone` varchar(255) NOT NULL,
   `customerEmail` varchar(255) DEFAULT NULL,
   `customerAddress` text DEFAULT NULL,
-  `startDate` bigint(20) UNSIGNED NOT NULL,
-  `endDate` bigint(20) UNSIGNED NOT NULL,
+  `date` bigint(20) UNSIGNED NOT NULL,
+  `paidAt` bigint(20) UNSIGNED DEFAULT NULL,
+  `endAt` bigint(20) UNSIGNED DEFAULT NULL,
+  `workEndAt` bigint(20) UNSIGNED DEFAULT NULL,
   `createdAt` bigint(20) UNSIGNED NOT NULL,
   `updatedAt` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -202,13 +204,16 @@ ALTER TABLE `items`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`code`),
+  ADD UNIQUE KEY `code` (`code`),
   ADD KEY `customerName` (`customerName`),
   ADD KEY `customerPhone` (`customerPhone`),
   ADD KEY `customerEmail` (`customerEmail`),
-  ADD KEY `startDate` (`startDate`),
-  ADD KEY `endDate` (`endDate`),
-  ADD KEY `couponId` (`couponId`);
+  ADD KEY `couponId` (`couponId`),
+  ADD KEY `date` (`date`),
+  ADD KEY `customerAddress` (`customerAddress`(768)),
+  ADD KEY `endAt` (`endAt`),
+  ADD KEY `workEndAt` (`workEndAt`),
+  ADD KEY `paidAt` (`paidAt`);
 
 --
 -- Indexes for table `order_products`
