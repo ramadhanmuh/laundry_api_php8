@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 15, 2024 at 06:41 PM
+-- Generation Time: Feb 16, 2024 at 10:13 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -24,16 +24,18 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `employees`
+-- Table structure for table `coupons`
 --
 
-CREATE TABLE `employees` (
+CREATE TABLE `coupons` (
   `id` char(36) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `phone` varchar(255) NOT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `address` text NOT NULL,
-  `status` tinyint(3) UNSIGNED NOT NULL,
+  `description` text NOT NULL,
+  `code` char(6) NOT NULL,
+  `discount` decimal(5,2) NOT NULL,
+  `startAt` bigint(20) UNSIGNED NOT NULL,
+  `endAt` bigint(20) UNSIGNED NOT NULL,
+  `status` tinyint(3) UNSIGNED NOT NULL COMMENT '0 = Tidak Aktif; 1 = Aktif',
   `createdAt` bigint(20) UNSIGNED NOT NULL,
   `updatedAt` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -41,28 +43,13 @@ CREATE TABLE `employees` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `employee_schedules`
+-- Table structure for table `items`
 --
 
-CREATE TABLE `employee_schedules` (
+CREATE TABLE `items` (
   `id` char(36) NOT NULL,
-  `employeeId` char(36) NOT NULL,
-  `orderProductId` char(36) NOT NULL,
-  `date` bigint(20) UNSIGNED NOT NULL,
-  `createdAt` bigint(20) UNSIGNED NOT NULL,
-  `updatedAt` bigint(20) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `employee_services`
---
-
-CREATE TABLE `employee_services` (
-  `id` char(36) NOT NULL,
-  `employeeId` char(36) NOT NULL,
-  `serviceId` char(36) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text NOT NULL,
   `createdAt` bigint(20) UNSIGNED NOT NULL,
   `updatedAt` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -75,10 +62,12 @@ CREATE TABLE `employee_services` (
 
 CREATE TABLE `orders` (
   `id` char(36) NOT NULL,
+  `couponId` char(36) DEFAULT NULL,
   `code` char(6) NOT NULL,
   `customerName` varchar(255) NOT NULL,
   `customerPhone` varchar(255) NOT NULL,
   `customerEmail` varchar(255) DEFAULT NULL,
+  `customerAddress` text DEFAULT NULL,
   `startDate` bigint(20) UNSIGNED NOT NULL,
   `endDate` bigint(20) UNSIGNED NOT NULL,
   `createdAt` bigint(20) UNSIGNED NOT NULL,
@@ -109,11 +98,25 @@ CREATE TABLE `order_products` (
 CREATE TABLE `products` (
   `id` char(36) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `description` text NOT NULL,
   `price` decimal(10,2) UNSIGNED NOT NULL,
-  `quantity` bigint(20) UNSIGNED NOT NULL COMMENT 'batas banyak barang',
+  `quantity` bigint(20) UNSIGNED NOT NULL COMMENT 'batas banyak barang untuk harga yang ditentukan',
   `unit` varchar(255) NOT NULL COMMENT 'satuan barang',
   `time` bigint(20) UNSIGNED NOT NULL,
   `status` tinyint(3) UNSIGNED NOT NULL COMMENT '0 = Tidak Aktif; 1 = Aktif',
+  `createdAt` bigint(20) UNSIGNED NOT NULL,
+  `updatedAt` bigint(20) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_items`
+--
+
+CREATE TABLE `product_items` (
+  `id` char(36) NOT NULL,
+  `itemId` char(36) NOT NULL,
   `createdAt` bigint(20) UNSIGNED NOT NULL,
   `updatedAt` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -128,36 +131,6 @@ CREATE TABLE `product_services` (
   `id` char(36) NOT NULL,
   `productId` char(36) NOT NULL,
   `serviceId` char(36) NOT NULL,
-  `createdAt` bigint(20) UNSIGNED NOT NULL,
-  `updatedAt` bigint(20) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `promotions`
---
-
-CREATE TABLE `promotions` (
-  `id` char(36) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `percentage` tinyint(3) UNSIGNED NOT NULL,
-  `startDate` bigint(20) UNSIGNED NOT NULL,
-  `endDate` bigint(20) UNSIGNED NOT NULL,
-  `createdAt` bigint(20) UNSIGNED NOT NULL,
-  `updatedAt` bigint(20) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `promotion_products`
---
-
-CREATE TABLE `promotion_products` (
-  `id` char(36) NOT NULL,
-  `promotionId` char(36) NOT NULL,
-  `productId` char(36) NOT NULL,
   `createdAt` bigint(20) UNSIGNED NOT NULL,
   `updatedAt` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -185,7 +158,7 @@ CREATE TABLE `reviews` (
 CREATE TABLE `services` (
   `id` char(36) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `status` tinyint(3) UNSIGNED NOT NULL COMMENT '0 = Tidak Aktif; 1 = Aktif',
+  `description` text NOT NULL,
   `createdAt` bigint(20) UNSIGNED NOT NULL,
   `updatedAt` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -210,33 +183,19 @@ CREATE TABLE `users` (
 --
 
 --
--- Indexes for table `employees`
+-- Indexes for table `coupons`
 --
-ALTER TABLE `employees`
+ALTER TABLE `coupons`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `phone_2` (`phone`),
-  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `code` (`code`);
+
+--
+-- Indexes for table `items`
+--
+ALTER TABLE `items`
+  ADD PRIMARY KEY (`id`),
   ADD KEY `name` (`name`),
-  ADD KEY `phone` (`phone`),
-  ADD KEY `address` (`address`(768)),
-  ADD KEY `status` (`status`);
-
---
--- Indexes for table `employee_schedules`
---
-ALTER TABLE `employee_schedules`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `date` (`date`),
-  ADD KEY `employeeId` (`employeeId`),
-  ADD KEY `orderProductId` (`orderProductId`);
-
---
--- Indexes for table `employee_services`
---
-ALTER TABLE `employee_services`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `employeeId` (`employeeId`,`serviceId`),
-  ADD KEY `serviceId` (`serviceId`);
+  ADD KEY `description` (`description`(768));
 
 --
 -- Indexes for table `orders`
@@ -248,7 +207,8 @@ ALTER TABLE `orders`
   ADD KEY `customerPhone` (`customerPhone`),
   ADD KEY `customerEmail` (`customerEmail`),
   ADD KEY `startDate` (`startDate`),
-  ADD KEY `endDate` (`endDate`);
+  ADD KEY `endDate` (`endDate`),
+  ADD KEY `couponId` (`couponId`);
 
 --
 -- Indexes for table `order_products`
@@ -262,11 +222,14 @@ ALTER TABLE `order_products`
 -- Indexes for table `products`
 --
 ALTER TABLE `products`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `product_items`
+--
+ALTER TABLE `product_items`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `name` (`name`),
-  ADD KEY `unit` (`unit`),
-  ADD KEY `price` (`price`),
-  ADD KEY `quantity` (`quantity`);
+  ADD KEY `itemId` (`itemId`);
 
 --
 -- Indexes for table `product_services`
@@ -275,24 +238,6 @@ ALTER TABLE `product_services`
   ADD PRIMARY KEY (`id`),
   ADD KEY `productId` (`productId`),
   ADD KEY `serviceId` (`serviceId`);
-
---
--- Indexes for table `promotions`
---
-ALTER TABLE `promotions`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `name` (`name`),
-  ADD KEY `percentage` (`percentage`),
-  ADD KEY `startDate` (`startDate`),
-  ADD KEY `endDate` (`endDate`);
-
---
--- Indexes for table `promotion_products`
---
-ALTER TABLE `promotion_products`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `productId` (`productId`),
-  ADD KEY `promotionId` (`promotionId`);
 
 --
 -- Indexes for table `reviews`
@@ -307,7 +252,8 @@ ALTER TABLE `reviews`
 ALTER TABLE `services`
   ADD PRIMARY KEY (`id`),
   ADD KEY `name` (`name`),
-  ADD KEY `status` (`status`);
+  ADD KEY `status` (`description`(768)),
+  ADD KEY `description` (`description`(768));
 
 --
 -- Indexes for table `users`
@@ -322,18 +268,10 @@ ALTER TABLE `users`
 --
 
 --
--- Constraints for table `employee_schedules`
+-- Constraints for table `orders`
 --
-ALTER TABLE `employee_schedules`
-  ADD CONSTRAINT `employee_schedules_ibfk_1` FOREIGN KEY (`employeeId`) REFERENCES `employees` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `employee_schedules_ibfk_2` FOREIGN KEY (`orderProductId`) REFERENCES `order_products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `employee_services`
---
-ALTER TABLE `employee_services`
-  ADD CONSTRAINT `employee_services_ibfk_1` FOREIGN KEY (`employeeId`) REFERENCES `employees` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `employee_services_ibfk_2` FOREIGN KEY (`serviceId`) REFERENCES `services` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `orders`
+  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`couponId`) REFERENCES `coupons` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `order_products`
@@ -343,18 +281,17 @@ ALTER TABLE `order_products`
   ADD CONSTRAINT `order_products_ibfk_2` FOREIGN KEY (`productId`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `product_items`
+--
+ALTER TABLE `product_items`
+  ADD CONSTRAINT `product_items_ibfk_1` FOREIGN KEY (`itemId`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `product_services`
 --
 ALTER TABLE `product_services`
   ADD CONSTRAINT `product_services_ibfk_1` FOREIGN KEY (`productId`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `product_services_ibfk_2` FOREIGN KEY (`serviceId`) REFERENCES `services` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `promotion_products`
---
-ALTER TABLE `promotion_products`
-  ADD CONSTRAINT `promotion_products_ibfk_1` FOREIGN KEY (`productId`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `promotion_products_ibfk_2` FOREIGN KEY (`promotionId`) REFERENCES `promotions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `reviews`
