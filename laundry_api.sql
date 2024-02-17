@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 17, 2024 at 03:38 AM
+-- Generation Time: Feb 17, 2024 at 04:02 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -100,7 +100,8 @@ CREATE TABLE `order_products` (
 
 CREATE TABLE `products` (
   `id` char(36) NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `slug` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `price` decimal(10,2) UNSIGNED NOT NULL,
   `quantity` decimal(10,2) UNSIGNED NOT NULL COMMENT 'batas banyak barang untuk harga yang ditentukan',
@@ -234,7 +235,8 @@ ALTER TABLE `order_products`
 -- Indexes for table `products`
 --
 ALTER TABLE `products`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
 
 --
 -- Indexes for table `product_items`
