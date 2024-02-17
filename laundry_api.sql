@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 17, 2024 at 02:49 AM
+-- Generation Time: Feb 17, 2024 at 03:38 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -108,6 +108,9 @@ CREATE TABLE `products` (
   `unit` varchar(255) NOT NULL COMMENT 'satuan barang',
   `time` bigint(20) UNSIGNED NOT NULL,
   `status` tinyint(3) UNSIGNED NOT NULL COMMENT '0 = Tidak Aktif; 1 = Aktif',
+  `smallImage` varchar(255) DEFAULT NULL,
+  `mediumImage` varchar(255) DEFAULT NULL,
+  `largeImage` varchar(255) DEFAULT NULL,
   `createdAt` bigint(20) UNSIGNED NOT NULL,
   `updatedAt` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
