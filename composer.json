@@ -1,0 +1,16 @@
+{
+    "name": "rama/laundry-api",
+    "description": "Aplikasi komunikasi ke basis data laundry",
+    "autoload": {
+        "psr-4": {
+            "Src\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Muhammad Ramadhan",
+            "email": "muhrama082@gmail.com"
+        }
+    ],
+    "require": {}
+}
