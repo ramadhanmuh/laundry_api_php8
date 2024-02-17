@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 16, 2024 at 10:31 PM
+-- Generation Time: Feb 17, 2024 at 02:49 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.1.12
 
@@ -64,14 +64,15 @@ CREATE TABLE `orders` (
   `id` char(36) NOT NULL,
   `couponId` char(36) DEFAULT NULL,
   `code` char(6) NOT NULL,
+  `date` bigint(20) UNSIGNED NOT NULL,
+  `amountPaid` decimal(10,2) UNSIGNED DEFAULT NULL,
+  `paidAt` bigint(20) UNSIGNED DEFAULT NULL,
+  `workEndAt` bigint(20) UNSIGNED DEFAULT NULL,
+  `endAt` bigint(20) UNSIGNED DEFAULT NULL,
   `customerName` varchar(255) NOT NULL,
   `customerPhone` varchar(255) NOT NULL,
   `customerEmail` varchar(255) DEFAULT NULL,
   `customerAddress` text DEFAULT NULL,
-  `date` bigint(20) UNSIGNED NOT NULL,
-  `paidAt` bigint(20) UNSIGNED DEFAULT NULL,
-  `endAt` bigint(20) UNSIGNED DEFAULT NULL,
-  `workEndAt` bigint(20) UNSIGNED DEFAULT NULL,
   `createdAt` bigint(20) UNSIGNED NOT NULL,
   `updatedAt` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -102,7 +103,8 @@ CREATE TABLE `products` (
   `name` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `price` decimal(10,2) UNSIGNED NOT NULL,
-  `quantity` bigint(20) UNSIGNED NOT NULL COMMENT 'batas banyak barang untuk harga yang ditentukan',
+  `quantity` decimal(10,2) UNSIGNED NOT NULL COMMENT 'batas banyak barang untuk harga yang ditentukan',
+  `maximumQuantity` decimal(10,2) NOT NULL COMMENT 'jumlah maksimal yang bisa dibeli',
   `unit` varchar(255) NOT NULL COMMENT 'satuan barang',
   `time` bigint(20) UNSIGNED NOT NULL,
   `status` tinyint(3) UNSIGNED NOT NULL COMMENT '0 = Tidak Aktif; 1 = Aktif',
@@ -213,7 +215,9 @@ ALTER TABLE `orders`
   ADD KEY `customerAddress` (`customerAddress`(768)),
   ADD KEY `endAt` (`endAt`),
   ADD KEY `workEndAt` (`workEndAt`),
-  ADD KEY `paidAt` (`paidAt`);
+  ADD KEY `paidAt` (`paidAt`),
+  ADD KEY `amountPaid` (`amountPaid`),
+  ADD KEY `amountPaid_2` (`amountPaid`);
 
 --
 -- Indexes for table `order_products`
